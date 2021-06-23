@@ -11,9 +11,9 @@ pipeline {
             steps {
                 powershell '''
                   $path = "$HOME/.sonar/build-wrapper-win-x86.zip"
-                  rm build-wrapper-win-x86 -Recurse -Force -ErrorAction SilentlyContinue
+                  rm $HOME/.sonar/build-wrapper-win-x86 -Recurse -Force -ErrorAction SilentlyContinue
                   rm $path -Force -ErrorAction SilentlyContinue
-                  mkdir $HOME/.sonar
+                  New-Item -ItemType directory -Path .sonar -Force
                   [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
                   (New-Object System.Net.WebClient).DownloadFile("<SonarQube URL>/static/cpp/build-wrapper-win-x86.zip", $path) <# Replace with your SonarQube server URL #>
                   Add-Type -AssemblyName System.IO.Compression.FileSystem
@@ -26,6 +26,7 @@ pipeline {
             steps {
                 powershell '''
                   $env:Path += ";$HOME/.sonar/build-wrapper-win-x86"
+                  rm build -Recurse -Force -ErrorAction SilentlyContinue <# To ensure a clean build for the analysis #>
                   New-Item -ItemType directory -Path build
                   cmake -S . -B build
                   build-wrapper-win-x86-64.exe --out-dir bw-output cmake --build build/ --config Release
