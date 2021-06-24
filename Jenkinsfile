@@ -18,14 +18,14 @@ pipeline {
                   (New-Object System.Net.WebClient).DownloadFile("<SonarQube URL>/static/cpp/build-wrapper-win-x86.zip", $path) <# Replace with your SonarQube server URL #>
                   Add-Type -AssemblyName System.IO.Compression.FileSystem
                   [System.IO.Compression.ZipFile]::ExtractToDirectory($path, "$HOME/.sonar")
+                  $env:Path += ";$HOME/.sonar/build-wrapper-win-x86"
                 '''
             }
         }
 
         stage('Build') {
             steps {
-                powershell '''
-                  $env:Path += ";$HOME/.sonar/build-wrapper-win-x86"
+                powershell '''                  
                   rm build -Recurse -Force -ErrorAction SilentlyContinue <# To ensure a clean build for the analysis #>
                   New-Item -ItemType directory -Path build
                   cmake -S . -B build
