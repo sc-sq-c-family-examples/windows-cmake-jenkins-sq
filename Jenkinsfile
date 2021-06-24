@@ -16,13 +16,13 @@ pipeline {
         stage('Download Build Wrapper') {
             steps {
                 powershell '''
-                  $path = "$HOME/.sonar/build-wrapper-win-x86.zip"
+                  $path = ".sonar/build-wrapper-win-x86.zip"
                   New-Item -ItemType directory -Path .sonar -Force
                   [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
                   (New-Object System.Net.WebClient).DownloadFile("<SonarQube URL>/static/cpp/build-wrapper-win-x86.zip", $path) <# Replace with your SonarQube server URL #>
                   Add-Type -AssemblyName System.IO.Compression.FileSystem
-                  [System.IO.Compression.ZipFile]::ExtractToDirectory($path, "$HOME/.sonar")
-                  $env:Path += ";$HOME/.sonar/build-wrapper-win-x86"
+                  [System.IO.Compression.ZipFile]::ExtractToDirectory($path, ".sonar")
+                  $env:Path += ";.sonar/build-wrapper-win-x86"
                 '''
             }
         }
