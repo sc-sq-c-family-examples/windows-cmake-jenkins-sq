@@ -1,8 +1,14 @@
 pipeline {
     agent any
+    options {
+        // This is required if you want to clean before build with the "Workspace Cleanup Plugin"
+        skipDefaultCheckout(true)
+    }
     stages {
         stage('SCM') {
             steps {
+                // Clean before build using the "Workspace Cleanup Plugin"
+                cleanWs()
                 checkout scm
             }
         }
@@ -11,8 +17,6 @@ pipeline {
             steps {
                 powershell '''
                   $path = "$HOME/.sonar/build-wrapper-win-x86.zip"
-                  rm $HOME/.sonar/build-wrapper-win-x86 -Recurse -Force -ErrorAction SilentlyContinue
-                  rm $path -Force -ErrorAction SilentlyContinue
                   New-Item -ItemType directory -Path .sonar -Force
                   [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
                   (New-Object System.Net.WebClient).DownloadFile("<SonarQube URL>/static/cpp/build-wrapper-win-x86.zip", $path) <# Replace with your SonarQube server URL #>
@@ -26,10 +30,9 @@ pipeline {
         stage('Build') {
             steps {
                 powershell '''                  
-                  rm build -Recurse -Force -ErrorAction SilentlyContinue <# To ensure a clean build for the analysis #>
                   New-Item -ItemType directory -Path build
                   cmake -S . -B build
-                  build-wrapper-win-x86-64.exe --out-dir bw-output cmake --build build/ --config Release
+                  build-wrapper-win-x86-64.exe --out-dir bw-output cmake --build build/ --config Release <# The build is clean thanks to the "cleanWs()" step #>
                 '''
             }
         }
