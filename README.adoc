@@ -7,7 +7,7 @@ It is very easy to analyze a C, C++ and Objective-C project with SonarQube in yo
 . Follow the steps described in the https://docs.sonarqube.org/latest/analysis/scan/sonarscanner-for-jenkins/[documentation of SonarScanner for Jenkins] 
 .. Install and configure the "SonarQube Scanner for Jenkins" plugin in "Configure System" section
 .. Configure the SonarScanner in "Global Tool Configuration" section
-. Add a task to download the https://docs.sonarqube.org/latest/analysis/languages/cfamily/#header-4/[Build Wrapper]
+. Add a task to download the https://docs.sonarqube.org/latest/analyzing-source-code/languages/c-family/#using-build-wrapper/[Build Wrapper]
 . Wrap your compilation with the Build Wrapper
 . Launch the analysis using `withSonarQubeEnv` block
 
